@@ -72,14 +72,9 @@ jobs:
       - name: Tag Docker image
         if: success()
         run: |
-          docker tag himanshu-ecr:v5 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v5
+          docker tag himanshu-ecr:latest 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v5
 
       - name: Push Docker image to AWS ECR
         if: success()
         run: |
           docker push 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v5
-
-
-
-      
-            
