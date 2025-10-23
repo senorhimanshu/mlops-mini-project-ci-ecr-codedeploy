@@ -3,7 +3,7 @@
 aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 375756731035.dkr.ecr.ap-south-1.amazonaws.com
 
 # Pull the latest image
-docker pull 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v5
+docker pull 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v6
 
 # Check if the container 'himanshu-app' is running
 if [ "$(docker ps -q -f name=himanshu-app)" ]; then
@@ -18,4 +18,4 @@ if [ "$(docker ps -aq -f name=himanshu-app)" ]; then
 fi
 
 # Run a new container
-docker run -d -p 80:5000 --name himanshu-app 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v5
+docker run -d -p 80:5000 --name himanshu-app 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v6
