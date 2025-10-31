@@ -72,9 +72,35 @@ jobs:
       - name: Tag Docker image
         if: success()
         run: |
-          docker tag himanshu-ecr:latest 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v6
+          docker tag himanshu-ecr:latest 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v7
 
       - name: Push Docker image to AWS ECR
         if: success()
         run: |
-          docker push 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v6
+          docker push 375756731035.dkr.ecr.ap-south-1.amazonaws.com/himanshu-ecr:v7
+
+      # Zip the required files
+      - name: Zip files for deployment
+        if: success()
+        run: |
+          zip -r deployment.zip appspec.yml deploy/scripts/install_dependencies.sh deploy/scripts/start_docker.sh
+
+      # Upload the ZIP file to S3
+      - name: Upload ZIP to S3
+        if: success()
+        run: |
+          aws s3 cp deployment.zip s3://himanshucodedeploybucket/deployment.zip
+
+      # Deploy to AWS CodeDeploy using the uploaded ZIP file
+      - name: Deploy to AWS CodeDeploy
+        if: success()
+        run: |
+          aws configure set aws_access_key_id ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws configure set aws_secret_access_key ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws deploy create-deployment \
+            --application-name MyDockerApp-1 \
+            --deployment-config-name CodeDeployDefault.OneAtATime \
+            --deployment-group-name MyDockerAppASGDeploymentGroup \
+            --s3-location bucket=himanshucodedeploybucket,key=deployment.zip,bundleType=zip \
+            --file-exists-behavior OVERWRITE \
+            --region ap-south-1
